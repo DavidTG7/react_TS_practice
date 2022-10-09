@@ -1,3 +1,4 @@
+import { type } from "os"
 import { useEffect, useReducer } from "react"
 
 interface AuthState {
@@ -14,7 +15,14 @@ const initialState: AuthState = {
   nombre: ''
 }
 
-type AuthAction = { type: 'logout' }
+type LoginPayload = {
+  userName: string;
+  nombre: string
+}
+
+type AuthAction =
+  | { type: 'logout' }
+  | { type: 'login', payload: LoginPayload }
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
   switch (action.type) {
@@ -24,7 +32,14 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         token: null,
         nombre: '',
         userName: ''
-
+      }
+    case 'login':
+      const { nombre, userName } = action.payload
+      return {
+        validando: false,
+        token: 'ABC123',
+        nombre,
+        userName
       }
 
     default:
@@ -34,13 +49,31 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 
 export const Login = () => {
 
-  const [{ validando }, dispatch] = useReducer(authReducer, initialState)
+  const [{ validando, token, nombre }, dispatch] = useReducer(authReducer, initialState)
 
   useEffect(() => {
     setTimeout(() => {
       dispatch({ type: 'logout' })
     }, 1500);
   }, [])
+
+  const login = () => {
+    dispatch({
+      type: 'login',
+      payload: {
+        nombre: 'DavidTG',
+        userName: 'Developer'
+      }
+    })
+  }
+
+  const logout = () => {
+    dispatch({
+      type: 'logout'
+    }
+    )
+  }
+
 
   if (validando) {
     return (
@@ -54,11 +87,16 @@ export const Login = () => {
   return (
     <>
       <h3>Login</h3>
-      <div className="alert alert-danger">No autenticado</div>
-      <div className="alert alert-success">Autenticado</div>
-      <button className="btn btn-primary">Login</button>&nbsp;
-      <button className="btn btn-danger">Logout</button>
-
+      {
+        (token)
+          ? <div className="alert alert-success">Autenticado como: {nombre}</div>
+          : <div className="alert alert-danger">No autenticado</div>
+      }
+      {
+        (token)
+          ? <button onClick={logout} className="btn btn-danger">Logout</button>
+          : <button onClick={login} className="btn btn-primary">Login</button>
+      }
     </>
   )
 }
