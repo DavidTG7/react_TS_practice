@@ -6,7 +6,7 @@
 // import TiposBasicos from "./typescript/TiposBasicos";
 
 import { Formularios } from "./components/Formularios";
-import { Usuarios } from "./components/Usuarios";
+// import { Usuarios } from "./components/Usuarios";
 
 const App = () => {
   return (
